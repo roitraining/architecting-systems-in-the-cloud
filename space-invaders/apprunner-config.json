@@ -8,6 +8,7 @@
         "Type": "BRANCH",
         "Value": "main"
       },
+      "ConnectionArn": "REPLACE_WITH_CONNECTION_ARN",
       "CodeConfiguration": {
         "ConfigurationSource": "API",
         "CodeConfigurationValues": {
