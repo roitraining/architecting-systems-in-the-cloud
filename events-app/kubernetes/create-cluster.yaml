@@ -13,5 +13,3 @@ nodeGroups:
     minSize: 1
     maxSize: 3
     volumeSize: 20
-    ssh:
-      allow: true
