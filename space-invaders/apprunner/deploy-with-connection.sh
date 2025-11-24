@@ -1,3 +1,17 @@
+#!/bin/bash
+
+# Deploy Space Invaders to App Runner using CONNECTION_ARN variable
+
+if [ -z "$CONNECTION_ARN" ]; then
+    echo "Error: CONNECTION_ARN environment variable not set"
+    echo "Run: export CONNECTION_ARN=your-connection-arn"
+    exit 1
+fi
+
+echo "Using Connection ARN: $CONNECTION_ARN"
+
+# Create config with connection ARN
+cat > apprunner-config-temp.json << EOF
 {
   "ServiceName": "space-invaders-demo",
   "SourceConfiguration": {
@@ -18,7 +32,7 @@
         }
       }
     },
-    "ConnectionArn": "REPLACE_WITH_CONNECTION_ARN",
+    "ConnectionArn": "$CONNECTION_ARN",
     "AutoDeploymentsEnabled": false
   },
   "InstanceConfiguration": {
@@ -26,3 +40,12 @@
     "Memory": "0.5 GB"
   }
 }
+EOF
+
+# Deploy
+aws apprunner create-service --cli-input-json file://apprunner-config-temp.json
+
+# Clean up
+rm apprunner-config-temp.json
+
+echo "Deployment initiated!"
