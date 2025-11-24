@@ -1,0 +1,17 @@
+{
+  "ServiceName": "space-invaders-docker",
+  "SourceConfiguration": {
+    "ImageRepository": {
+      "ImageIdentifier": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/space-invaders:latest",
+      "ImageConfiguration": {
+        "Port": "80"
+      },
+      "ImageRepositoryType": "ECR"
+    },
+    "AutoDeploymentsEnabled": false
+  },
+  "InstanceConfiguration": {
+    "Cpu": "0.25 vCPU",
+    "Memory": "0.5 GB"
+  }
+}

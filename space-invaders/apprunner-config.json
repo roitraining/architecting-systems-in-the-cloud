@@ -9,7 +9,7 @@
         "Value": "main"
       },
       "CodeConfiguration": {
-        "ConfigurationSource": "REPOSITORY",
+        "ConfigurationSource": "API",
         "CodeConfigurationValues": {
           "Runtime": "NODEJS_18",
           "BuildCommand": "npm install -g http-server",
