@@ -18,7 +18,9 @@
         }
       }
     },
-    "ConnectionArn": "REPLACE_WITH_CONNECTION_ARN",
+    "AuthenticationConfiguration": {
+      "ConnectionArn": "REPLACE_WITH_CONNECTION_ARN"
+    },
     "AutoDeploymentsEnabled": false
   },
   "InstanceConfiguration": {
