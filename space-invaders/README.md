@@ -1,49 +1,49 @@
-# Architecting Systems in the Cloud - Course 838A
+# Space Invaders - AWS Deployment Demo
 
-## Space Invaders Demo Application
+Demo application for AWS course showing multiple deployment methods.
 
-Simple AngularJS application for demonstrating AWS App Runner deployments.
+## Project Structure
 
-### 2024 Updates
-- Updated to Bootstrap 5.3.2
-- Updated to jQuery 3.7.1  
-- Updated to AngularJS 1.8.3 (Final LTS)
-- Added AWS App Runner deployment support
-
-## AWS App Runner Deployment
-
-### Quick Deploy (Recommended)
-```bash
-aws apprunner create-service \
-  --service-name space-invaders-demo \
-  --source-configuration '{
-    "ImageRepository": {
-      "ImageIdentifier": "public.ecr.aws/nginx/nginx:latest",
-      "ImageConfiguration": {
-        "Port": "80"
-      },
-      "ImageRepositoryType": "ECR_PUBLIC"
-    }
-  }' \
-  --instance-configuration '{
-    "Cpu": "0.25 vCPU",
-    "Memory": "0.5 GB"
-  }'
+```
+space-invaders/
+├── src/                    # Shared source code
+│   ├── index.html         # Main HTML file
+│   ├── app.js             # AngularJS application
+│   ├── style.css          # Styles
+│   ├── controllers/       # AngularJS controllers
+│   ├── views/             # HTML templates
+│   └── *.svg              # Game assets
+├── apprunner/             # App Runner deployment files
+│   ├── apprunner-config.json
+│   ├── deploy.sh
+│   └── README-AppRunner.md
+├── elasticbeanstalk/      # Elastic Beanstalk deployment files
+│   ├── package.json
+│   ├── server.js
+│   ├── deploy-eb.sh
+│   └── README-ElasticBeanstalk.md
+└── README.md              # This file
 ```
 
-### Files for App Runner
-- `apprunner.yaml` - App Runner configuration
-- `simple-deploy.sh` - One-command deployment
-- `Dockerfile` - Container configuration
-- `README-AppRunner.md` - Detailed deployment guide
+## Deployment Options
 
-## Docker (Local Testing)
-```bash
-docker build -t space-invaders:v3.0 .
-docker run -p 8080:80 space-invaders:v3.0
-```
+### 1. AWS App Runner
+- Deploys from GitHub repository
+- Requires GitHub connection setup
+- See `apprunner/README-AppRunner.md`
 
-## Author
-Doug Rehnstrom  
-ROI Training  
-doug@roitraining.com
+### 2. AWS Elastic Beanstalk  
+- Deploys from local files (no GitHub auth needed)
+- Uses Node.js + Express platform
+- See `elasticbeanstalk/README-ElasticBeanstalk.md`
+
+## Application Details
+- **Framework**: AngularJS 1.8.3
+- **UI**: Bootstrap 5.3.2
+- **Version**: 3.0 (Updated 2024)
+- **Type**: Single Page Application (SPA)
+
+## Quick Start
+1. Choose deployment method (App Runner or Elastic Beanstalk)
+2. Follow instructions in respective README files
+3. Deploy and test your Space Invaders game!

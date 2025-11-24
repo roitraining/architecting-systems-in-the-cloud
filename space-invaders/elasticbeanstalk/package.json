@@ -1,0 +1,15 @@
+{
+  "name": "space-invaders",
+  "version": "3.0.0",
+  "description": "Space Invaders demo app for AWS course",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
