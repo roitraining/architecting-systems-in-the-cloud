@@ -3,12 +3,19 @@
   "SourceConfiguration": {
     "CodeRepository": {
       "RepositoryUrl": "https://github.com/roitraining/architecting-systems-in-the-cloud",
+      "SourceDirectory": "space-invaders",
       "SourceCodeVersion": {
         "Type": "BRANCH",
         "Value": "main"
       },
       "CodeConfiguration": {
-        "ConfigurationSource": "CONFIGURATION_FILE"
+        "ConfigurationSource": "REPOSITORY",
+        "CodeConfigurationValues": {
+          "Runtime": "DOCKER",
+          "BuildCommand": "docker build -t space-invaders .",
+          "StartCommand": "nginx -g \"daemon off;\"",
+          "Port": "80"
+        }
       }
     },
     "AutoDeploymentsEnabled": false
