@@ -1,0 +1,11 @@
+{
+  "name": "space-invaders",
+  "version": "3.0.0",
+  "description": "Space Invaders demo app",
+  "scripts": {
+    "start": "http-server -p 8080"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}

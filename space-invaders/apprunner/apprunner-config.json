@@ -12,8 +12,8 @@
         "ConfigurationSource": "API",
         "CodeConfigurationValues": {
           "Runtime": "NODEJS_18",
-          "BuildCommand": "npm install -g http-server",
-          "StartCommand": "http-server -p 8080",
+          "BuildCommand": "npm install",
+          "StartCommand": "npm start",
           "Port": "8080"
         }
       }
