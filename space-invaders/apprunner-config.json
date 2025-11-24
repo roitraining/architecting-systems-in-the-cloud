@@ -11,10 +11,10 @@
       "CodeConfiguration": {
         "ConfigurationSource": "REPOSITORY",
         "CodeConfigurationValues": {
-          "Runtime": "DOCKER",
-          "BuildCommand": "docker build -t space-invaders .",
-          "StartCommand": "nginx -g \"daemon off;\"",
-          "Port": "80"
+          "Runtime": "NODEJS_18",
+          "BuildCommand": "npm install -g http-server",
+          "StartCommand": "http-server -p 8080",
+          "Port": "8080"
         }
       }
     },
