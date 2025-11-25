@@ -15,13 +15,13 @@ Bootstrap 5 UI          In-memory data store
 
 ```
 events-app/
-├── frontend/           # Static web frontend
+├── events-website/     # Static web frontend
 │   ├── index.html     # Main HTML page
 │   ├── app.js         # JavaScript frontend logic
 │   ├── style.css      # Custom styles
 │   ├── package.json   # Frontend dependencies
 │   └── Dockerfile     # Frontend container
-├── backend/           # Node.js API server
+├── events-backend/     # Node.js API server
 │   ├── server.js      # Express.js API server
 │   ├── package.json   # Backend dependencies
 │   └── Dockerfile     # Backend container
@@ -57,14 +57,14 @@ events-app/
 
 ### Backend
 ```bash
-cd backend
+cd events-backend
 npm install
 npm run dev  # Uses nodemon for auto-restart
 ```
 
-### Frontend
+### Website
 ```bash
-cd frontend
+cd events-website
 npm install
 npm start    # Serves on http://localhost:3000
 ```
