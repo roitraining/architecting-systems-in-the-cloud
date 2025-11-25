@@ -244,7 +244,7 @@ Resources:
       HealthCheckGracePeriod: 300
       Tags:
         - Key: Name
-          Value: ImageProcessor-Instance
+          Value: !Sub "${AWS::StackName}-ImageProcessor"
           PropagateAtLaunch: true
 
   # Scale Up Policy
