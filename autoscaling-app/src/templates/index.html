@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing Autoscaling Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .metrics-card { margin-bottom: 20px; }
+        .progress-container { margin: 10px 0; }
+        .cpu-indicator { 
+            width: 20px; 
+            height: 20px; 
+            border-radius: 50%; 
+            display: inline-block; 
+            margin-right: 10px;
+        }
+        .cpu-low { background-color: #28a745; }
+        .cpu-medium { background-color: #ffc107; }
+        .cpu-high { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container">
+            <span class="navbar-brand">🖼️ Image Processing Autoscaling Demo</span>
+            <span class="navbar-text" id="instance-info">Instance: Loading...</span>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- System Metrics -->
+            <div class="col-md-4">
+                <div class="card metrics-card">
+                    <div class="card-header">
+                        <h5>System Metrics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <span id="cpu-indicator" class="cpu-indicator cpu-low"></span>
+                            <strong>CPU Usage:</strong> <span id="cpu-usage">0%</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Memory:</strong> <span id="memory-usage">0%</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Queue Size:</strong> <span id="queue-size">0</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Active Jobs:</strong> <span id="active-jobs">0</span>
+                        </div>
+                        <button class="btn btn-warning btn-sm" onclick="loadTest()">Generate CPU Load</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Upload Images for Processing</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="upload-form" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <input type="file" class="form-control" id="image-input" accept="image/*" multiple>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Process Images</button>
+                            <button type="button" class="btn btn-success" onclick="uploadMultiple()">Upload 10 Images (Trigger Scaling)</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Processing Status -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5>Processing Status</h5>
+                    </div>
+                    <div class="card-body" id="status-container">
+                        <p class="text-muted">No jobs running</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h6>How to Trigger Autoscaling:</h6>
+                    <ol>
+                        <li><strong>Upload multiple images</strong> - Click "Upload 10 Images" to queue many processing jobs</li>
+                        <li><strong>Generate CPU load</strong> - Click "Generate CPU Load" to simulate high CPU usage</li>
+                        <li><strong>Watch CloudWatch</strong> - Monitor the dashboard to see CPU metrics rise</li>
+                        <li><strong>Observe scaling</strong> - New instances will launch when CPU > 70% for 2 minutes</li>
+                        <li><strong>Scale down</strong> - Instances terminate when CPU < 30% for 5 minutes</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let jobs = {};
+
+        // Get instance metadata
+        fetch('/metrics')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('instance-info').textContent = `Instance: ${window.location.hostname}`;
+            });
+
+        // Update metrics every 5 seconds
+        function updateMetrics() {
+            fetch('/metrics')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('cpu-usage').textContent = data.cpu_percent.toFixed(1) + '%';
+                    document.getElementById('memory-usage').textContent = data.memory_percent.toFixed(1) + '%';
+                    document.getElementById('queue-size').textContent = data.queue_size;
+                    document.getElementById('active-jobs').textContent = data.active_jobs;
+
+                    // Update CPU indicator
+                    const indicator = document.getElementById('cpu-indicator');
+                    indicator.className = 'cpu-indicator ' + 
+                        (data.cpu_percent > 70 ? 'cpu-high' : 
+                         data.cpu_percent > 30 ? 'cpu-medium' : 'cpu-low');
+                })
+                .catch(err => console.error('Metrics error:', err));
+        }
+
+        // Upload form handler
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const files = document.getElementById('image-input').files;
+            
+            for (let file of files) {
+                uploadFile(file);
+            }
+        });
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.job_id) {
+                    jobs[data.job_id] = { filename: file.name, status: 'queued' };
+                    updateStatusDisplay();
+                    pollJobStatus(data.job_id);
+                }
+            })
+            .catch(err => console.error('Upload error:', err));
+        }
+
+        function pollJobStatus(jobId) {
+            const poll = () => {
+                fetch(`/status/${jobId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        jobs[jobId] = { ...jobs[jobId], ...data };
+                        updateStatusDisplay();
+                        
+                        if (data.status === 'processing' || data.status === 'queued') {
+                            setTimeout(poll, 2000);
+                        }
+                    });
+            };
+            poll();
+        }
+
+        function updateStatusDisplay() {
+            const container = document.getElementById('status-container');
+            const jobList = Object.entries(jobs);
+            
+            if (jobList.length === 0) {
+                container.innerHTML = '<p class="text-muted">No jobs running</p>';
+                return;
+            }
+
+            container.innerHTML = jobList.map(([jobId, job]) => `
+                <div class="progress-container">
+                    <div class="d-flex justify-content-between">
+                        <span>${job.filename}</span>
+                        <span class="badge bg-${job.status === 'completed' ? 'success' : 
+                                                job.status === 'error' ? 'danger' : 
+                                                job.status === 'processing' ? 'warning' : 'secondary'}">
+                            ${job.status}
+                        </span>
+                    </div>
+                    ${job.progress !== undefined ? `
+                        <div class="progress mt-1">
+                            <div class="progress-bar" style="width: ${job.progress}%"></div>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function uploadMultiple() {
+            // Create dummy files to trigger processing load
+            for (let i = 0; i < 10; i++) {
+                // Create a small test image
+                const canvas = document.createElement('canvas');
+                canvas.width = 400;
+                canvas.height = 300;
+                const ctx = canvas.getContext('2d');
+                
+                // Draw random colored rectangle
+                ctx.fillStyle = `hsl(${Math.random() * 360}, 70%, 50%)`;
+                ctx.fillRect(0, 0, 400, 300);
+                
+                canvas.toBlob(blob => {
+                    const file = new File([blob], `test-image-${i}.png`, { type: 'image/png' });
+                    uploadFile(file);
+                });
+            }
+        }
+
+        function loadTest() {
+            fetch('/load-test')
+                .then(response => response.json())
+                .then(data => {
+                    alert('CPU load test started! Watch the metrics for 30 seconds.');
+                });
+        }
+
+        // Start metrics updates
+        updateMetrics();
+        setInterval(updateMetrics, 5000);
+    </script>
+</body>
+</html>
