@@ -23,7 +23,7 @@ spec:
         - name: PORT
           value: "3000"
         - name: API_URL
-          value: "http://BACKEND_LOADBALANCER_URL"
+          value: "http://events-backend-service"
         resources:
           requests:
             memory: "64Mi"
