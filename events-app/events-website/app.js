@@ -1,7 +1,7 @@
 // Configuration
 const API_BASE_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:3001' 
-    : '/api-proxy';
+    : (window.API_URL || 'http://events-backend-service:3001');
 
 // DOM Elements
 const eventsList = document.getElementById('events-list');
