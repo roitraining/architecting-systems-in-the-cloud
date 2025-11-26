@@ -1,0 +1,31 @@
+# Elastic Beanstalk ignore file
+# These files won't be included in the deployment package
+
+# Git files
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed in deployment)
+README-ElasticBeanstalk.md
+
+# Deployment scripts (not needed in deployment)
+deploy-eb.sh
+setup-deployment.sh
+
+# Node modules (will be installed on server)
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*

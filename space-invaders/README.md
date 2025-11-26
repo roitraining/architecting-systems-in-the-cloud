@@ -27,15 +27,17 @@ space-invaders/
 
 ## Deployment Options
 
-### 1. AWS App Runner
+### 1. AWS Elastic Beanstalk (Recommended for Classroom)
+- ✅ Deploys from local files (no GitHub auth needed)
+- ✅ Uses AWS CloudShell (no local setup required)
+- ✅ Step-by-step instructions for students
+- ✅ Uses Node.js + Express platform
+- See `elasticbeanstalk/README-ElasticBeanstalk.md`
+
+### 2. AWS App Runner
 - Deploys from GitHub repository
 - Requires GitHub connection setup
 - See `apprunner/README-AppRunner.md`
-
-### 2. AWS Elastic Beanstalk  
-- Deploys from local files (no GitHub auth needed)
-- Uses Node.js + Express platform
-- See `elasticbeanstalk/README-ElasticBeanstalk.md`
 
 ## Application Details
 - **Framework**: AngularJS 1.8.3
