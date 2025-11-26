@@ -70,7 +70,7 @@ resource "aws_subnet" "vpc_1_subnet" {
   vpc_id                  = aws_vpc.vpc_1.id
   cidr_block              = var.vpc_1_subnet_cidr
   availability_zone       = data.aws_availability_zones.available.names[0]
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     Name    = "${var.project_name}-vpc-1-subnet"
@@ -84,7 +84,7 @@ resource "aws_subnet" "vpc_2_subnet" {
   vpc_id                  = aws_vpc.vpc_2.id
   cidr_block              = var.vpc_2_subnet_cidr
   availability_zone       = data.aws_availability_zones.available.names[0]
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     Name    = "${var.project_name}-vpc-2-subnet"
@@ -93,36 +93,9 @@ resource "aws_subnet" "vpc_2_subnet" {
   }
 }
 
-# Internet Gateway for VPC 1
-resource "aws_internet_gateway" "vpc_1_igw" {
-  vpc_id = aws_vpc.vpc_1.id
-
-  tags = {
-    Name    = "${var.project_name}-vpc-1-igw"
-    Project = var.project_name
-    Lab     = "lab1-vpc-ec2"
-  }
-}
-
-# Internet Gateway for VPC 2
-resource "aws_internet_gateway" "vpc_2_igw" {
-  vpc_id = aws_vpc.vpc_2.id
-
-  tags = {
-    Name    = "${var.project_name}-vpc-2-igw"
-    Project = var.project_name
-    Lab     = "lab1-vpc-ec2"
-  }
-}
-
-# Route Table for VPC 1
+# Route Table for VPC 1 (no internet gateway)
 resource "aws_route_table" "vpc_1_rt" {
   vpc_id = aws_vpc.vpc_1.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.vpc_1_igw.id
-  }
 
   tags = {
     Name    = "${var.project_name}-vpc-1-rt"
@@ -131,14 +104,9 @@ resource "aws_route_table" "vpc_1_rt" {
   }
 }
 
-# Route Table for VPC 2
+# Route Table for VPC 2 (no internet gateway)
 resource "aws_route_table" "vpc_2_rt" {
   vpc_id = aws_vpc.vpc_2.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.vpc_2_igw.id
-  }
 
   tags = {
     Name    = "${var.project_name}-vpc-2-rt"

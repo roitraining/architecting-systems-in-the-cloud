@@ -41,11 +41,6 @@ output "vpc_1_instance_private_ip" {
   value       = aws_instance.vpc_1_instance.private_ip
 }
 
-output "vpc_1_instance_public_ip" {
-  description = "Public IP of instance in VPC 1"
-  value       = aws_instance.vpc_1_instance.public_ip
-}
-
 output "vpc_2_instance_id" {
   description = "Instance ID in VPC 2"
   value       = aws_instance.vpc_2_instance.id
@@ -54,11 +49,6 @@ output "vpc_2_instance_id" {
 output "vpc_2_instance_private_ip" {
   description = "Private IP of instance in VPC 2"
   value       = aws_instance.vpc_2_instance.private_ip
-}
-
-output "vpc_2_instance_public_ip" {
-  description = "Public IP of instance in VPC 2"
-  value       = aws_instance.vpc_2_instance.public_ip
 }
 
 output "connection_instructions" {
@@ -72,20 +62,25 @@ output "connection_instructions" {
     VPC 1 Instance:
       - Instance ID: ${aws_instance.vpc_1_instance.id}
       - Private IP: ${aws_instance.vpc_1_instance.private_ip}
-      - Public IP: ${aws_instance.vpc_1_instance.public_ip}
-      - Connect: Use EC2 Instance Connect in AWS Console
+      - Connect: Use AWS Systems Manager Session Manager
     
     VPC 2 Instance:
       - Instance ID: ${aws_instance.vpc_2_instance.id}
       - Private IP: ${aws_instance.vpc_2_instance.private_ip}
-      - Public IP: ${aws_instance.vpc_2_instance.public_ip}
-      - Connect: Use EC2 Instance Connect in AWS Console
+      - Connect: Use AWS Systems Manager Session Manager
+    
+    Connection Method (No Internet Gateway):
+      1. AWS Console → EC2 → Instances
+      2. Select instance → Connect → Session Manager
+      3. Click "Connect"
     
     Next Steps:
-      1. Connect to VPC 1 instance via EC2 Instance Connect
+      1. Connect to VPC 1 instance via Session Manager
       2. Try to ping VPC 2 instance: ping ${aws_instance.vpc_2_instance.private_ip}
       3. This should FAIL - no connectivity yet!
       4. Proceed to Lab 2 to add VPC peering
+    
+    Note: Instances have no internet access (no IGW)
     
     ========================================
   EOT
