@@ -1,9 +1,11 @@
 # Elastic Beanstalk ignore file
 # These files won't be included in the deployment package
 
+# IMPORTANT: public/ directory IS included (not listed here)
+# It contains the game files and must be deployed
+
 # Git files
 .git/
-.gitignore
 
 # IDE files
 .vscode/
@@ -17,7 +19,16 @@
 Thumbs.db
 
 # Documentation (not needed in deployment)
-README-ElasticBeanstalk.md
+README*.md
+INSTRUCTOR-GUIDE.md
+TROUBLESHOOTING.md
+ARCHITECTURE.md
+QUICK-REFERENCE.md
+STUDENT-HANDOUT.md
+DEPLOYMENT-SUMMARY.md
+CHANGES.md
+COMPLETE.md
+INDEX.md
 
 # Deployment scripts (not needed in deployment)
 deploy-eb.sh
