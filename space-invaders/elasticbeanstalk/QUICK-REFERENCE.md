@@ -10,9 +10,8 @@ export PATH=$PATH:$HOME/.local/bin
 # 2. Navigate to project
 cd space-invaders/elasticbeanstalk
 
-# 3. Setup files
-chmod +x setup-deployment.sh
-./setup-deployment.sh
+# 3. Verify files exist
+ls -la public/
 
 # 4. Initialize EB
 eb init
@@ -49,8 +48,9 @@ export PATH=$PATH:$HOME/.local/bin
 
 **App shows blank page?**
 ```bash
-./setup-deployment.sh
-eb deploy
+# Verify public directory exists with files
+ls -la public/
+# If files are missing, re-clone the repository
 ```
 
 **Need to see errors?**
@@ -67,7 +67,7 @@ eb create space-invaders-env
 ## ✅ Checklist
 
 - [ ] Installed EB CLI
-- [ ] Ran setup script
+- [ ] Verified public/ directory exists
 - [ ] Initialized EB application
 - [ ] Created environment
 - [ ] Opened and tested app

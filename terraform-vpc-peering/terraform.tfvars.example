@@ -1,0 +1,13 @@
+# Example Terraform Variables
+# Copy this file to terraform.tfvars and customize as needed
+
+aws_region = "us-east-1"
+project_name = "vpc-peering-demo"
+
+# VPC CIDR blocks (must not overlap!)
+vpc_1_cidr = "10.1.0.0/16"
+vpc_2_cidr = "10.2.0.0/16"
+
+# Subnet CIDR blocks
+vpc_1_subnet_cidr = "10.1.1.0/24"
+vpc_2_subnet_cidr = "10.2.1.0/24"

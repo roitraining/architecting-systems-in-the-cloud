@@ -50,14 +50,13 @@ cd space-invaders/elasticbeanstalk
 3. Extract: `unzip space-invaders.zip`
 4. Navigate: `cd space-invaders/elasticbeanstalk`
 
-### Step 4: Setup Files (1 min)
+### Step 4: Verify Files (1 min)
 
 ```bash
-chmod +x setup-deployment.sh
-./setup-deployment.sh
+ls -la public/
 ```
 
-✅ **Checkpoint**: You should see "✅ Setup complete!"
+✅ **Checkpoint**: You should see game files (index.html, app.js, style.css, etc.)
 
 ### Step 5: Initialize EB (3 min)
 

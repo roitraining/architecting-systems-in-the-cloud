@@ -43,16 +43,15 @@ unzip space-invaders.zip
 cd space-invaders/elasticbeanstalk
 ```
 
-### Step 4: Prepare the Deployment
+### Step 4: Verify Files
 
-Run the setup script to organize files for deployment:
+Verify that the game files are present:
 
 ```bash
-chmod +x setup-deployment.sh
-./setup-deployment.sh
+ls -la public/
 ```
 
-This copies all game files into the correct structure for Elastic Beanstalk.
+You should see: `index.html`, `app.js`, `style.css`, `controllers/`, `views/`, and game assets (*.svg files).
 
 ### Step 5: Initialize Elastic Beanstalk
 

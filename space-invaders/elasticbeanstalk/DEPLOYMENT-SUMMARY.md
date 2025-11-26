@@ -219,11 +219,10 @@ elasticbeanstalk/
 ## 🚀 Quick Start Commands
 
 ```bash
-# Complete deployment in 6 commands:
+# Complete deployment in 5 commands:
 pip install awsebcli --user
 export PATH=$PATH:$HOME/.local/bin
 cd space-invaders/elasticbeanstalk
-./setup-deployment.sh
 eb init
 eb create space-invaders-env
 ```
