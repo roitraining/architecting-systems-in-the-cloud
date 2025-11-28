@@ -1,0 +1,43 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: events-cluster-auto
+  region: us-east-1
+  version: "1.31"
+
+# Enable EKS Auto Mode for automatic compute management
+computeConfig:
+  enabled: true
+  nodePools:
+    - general-purpose
+    - system
+
+# VPC configuration (optional - eksctl will create if not specified)
+# vpc:
+#   cidr: 192.168.0.0/16
+#   nat:
+#     gateway: Single
+
+# IAM configuration
+iam:
+  withOIDC: true
+
+# Addons (optional)
+addons:
+  - name: vpc-cni
+    version: latest
+  - name: coredns
+    version: latest
+  - name: kube-proxy
+    version: latest
+
+# CloudWatch logging (optional)
+cloudWatch:
+  clusterLogging:
+    enableTypes:
+      - api
+      - audit
+      - authenticator
+      - controllerManager
+      - scheduler
