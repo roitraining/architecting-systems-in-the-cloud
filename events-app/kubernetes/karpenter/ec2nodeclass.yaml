@@ -1,0 +1,51 @@
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  # AMI Selection - use the latest EKS-optimized AMI
+  amiFamily: AL2  # Amazon Linux 2
+  
+  # Alternatively, specify exact AMI:
+  # amiSelectorTerms:
+  #   - id: ami-0123456789abcdef0
+  
+  # IAM Role for nodes
+  role: "KarpenterNodeRole-events-cluster"
+  
+  # Subnet selection - Karpenter will use subnets tagged with karpenter.sh/discovery
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "events-cluster"
+  
+  # Security group selection
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "events-cluster"
+  
+  # User data for node initialization (optional)
+  userData: |
+    #!/bin/bash
+    echo "Karpenter provisioned node"
+  
+  # Block device mappings for node storage
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 20Gi
+        volumeType: gp3
+        encrypted: true
+        deleteOnTermination: true
+  
+  # Metadata options
+  metadataOptions:
+    httpEndpoint: enabled
+    httpProtocolIPv6: disabled
+    httpPutResponseHopLimit: 2
+    httpTokens: required  # Require IMDSv2
+  
+  # Tags to apply to EC2 instances
+  tags:
+    Name: "karpenter-node"
+    ManagedBy: "karpenter"
+    Environment: "demo"

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflate
+  namespace: default
+spec:
+  replicas: 0  # Start with 0, students will scale up manually
+  selector:
+    matchLabels:
+      app: inflate
+  template:
+    metadata:
+      labels:
+        app: inflate
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: inflate
+        image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
+        resources:
+          requests:
+            cpu: 1000m      # Request 1 vCPU
+            memory: 1.5Gi   # Request 1.5 GiB memory
+          limits:
+            cpu: 1000m
+            memory: 1.5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inflate
+  namespace: default
+spec:
+  selector:
+    app: inflate
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP

@@ -23,6 +23,45 @@ In this lab, you'll create two isolated Virtual Private Clouds (VPCs) with EC2 i
 
 ---
 
+## Initial Setup (Run Once)
+
+### Install Terraform in CloudShell
+
+If using AWS CloudShell, install Terraform first:
+
+```bash
+# Add HashiCorp repository and install Terraform
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum -y install terraform
+
+# Verify installation
+terraform --version
+```
+
+---
+
+### Configure Plugin Cache (IMPORTANT - Saves 2.4 GB!)
+
+**Why?** Without this, each lab downloads the AWS provider separately (1.2 GB × 3 labs = 3.6 GB). With plugin cache, all labs share one copy (1.2 GB total).
+
+```bash
+# Create plugin cache directory
+mkdir -p ~/.terraform.d/plugin-cache
+
+# Configure Terraform to use it
+cat > ~/.terraformrc << EOF
+plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"
+EOF
+
+# Verify configuration
+cat ~/.terraformrc
+```
+
+✅ **You only need to do this ONCE** - it applies to all labs!
+
+---
+
 ## Terraform Commands - Step by Step
 
 ### Step 1: Navigate to Lab Directory
@@ -47,11 +86,14 @@ Initializing the backend...
 Initializing provider plugins...
 - Finding hashicorp/aws versions matching "~> 5.0"...
 - Installing hashicorp/aws v5.x.x...
+- Installed hashicorp/aws v5.x.x (signed by HashiCorp)
 
 Terraform has been successfully initialized!
 ```
 
 ✅ **Success Indicator:** You should see "Terraform has been successfully initialized!"
+
+**Note:** With plugin cache configured, the provider is downloaded to `~/.terraform.d/plugin-cache/` and reused across all labs. Without it, each lab would download its own copy!
 
 ---
 
@@ -473,6 +515,17 @@ terraform destroy -auto-approve
 ## Quick Reference - All Commands in Order
 
 ```bash
+# SETUP (Once per CloudShell session)
+# Install Terraform
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum -y install terraform
+
+# Configure plugin cache (saves 2.4 GB!)
+mkdir -p ~/.terraform.d/plugin-cache
+echo 'plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"' > ~/.terraformrc
+
+# LAB COMMANDS
 # 1. Navigate to directory
 cd terraform-lab/vpc-ec2
 
@@ -502,7 +555,7 @@ terraform state list
 terraform state show aws_instance.vpc_1_instance
 
 # 10. Connect to instance and test (in AWS Console)
-# EC2 → Instances → Connect → EC2 Instance Connect
+# EC2 → Instances → Connect → Session Manager
 # Then: ping <VPC_2_PRIVATE_IP>
 
 # 11. When done with ALL labs, destroy
