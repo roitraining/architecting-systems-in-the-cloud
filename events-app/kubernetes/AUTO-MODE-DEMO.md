@@ -68,11 +68,48 @@ eksctl delete cluster --name events-cluster --region us-east-1
 
 ## Part 2: Auto Mode Cluster (With Auto Mode)
 
-### Step 1: Create Auto Mode Cluster
+### Step 1: Create Cluster and Enable Auto Mode
 
+**Option A: Using eksctl + AWS CLI (Recommended)**
+
+First, create the cluster:
 ```bash
 eksctl create cluster -f create-cluster-auto-mode.yaml
 ```
+
+Then enable Auto Mode:
+```bash
+aws eks update-cluster-config \
+  --name events-cluster-auto \
+  --region us-east-1 \
+  --compute-config enabled=true,nodePools=general-purpose,nodePools=system
+```
+
+**Option B: Using AWS CLI Only**
+
+```bash
+# Set variables
+export CLUSTER_NAME=events-cluster-auto
+export AWS_REGION=us-east-1
+export ROLE_ARN=$(aws iam get-role --role-name EKSClusterRole --query 'Role.Arn' --output text)
+
+# Get subnet IDs (use your VPC subnets)
+export SUBNET_IDS=$(aws ec2 describe-subnets \
+  --filters "Name=tag:Name,Values=*public*" \
+  --query 'Subnets[0:2].SubnetId' \
+  --output text | tr '\t' ',')
+
+# Create cluster with Auto Mode
+aws eks create-cluster \
+  --name ${CLUSTER_NAME} \
+  --region ${AWS_REGION} \
+  --role-arn ${ROLE_ARN} \
+  --resources-vpc-config subnetIds=${SUBNET_IDS} \
+  --compute-config enabled=true,nodePools=general-purpose,nodePools=system \
+  --kubernetes-version 1.34
+```
+
+Wait 10-15 minutes for cluster creation.
 
 This creates a cluster with **Auto Mode enabled** - no node groups needed!
 
@@ -186,8 +223,14 @@ eksctl delete cluster --name events-cluster --region us-east-1
 
 ### Auto Mode Cluster
 ```bash
-# Create
+# Create cluster
 eksctl create cluster -f create-cluster-auto-mode.yaml
+
+# Enable Auto Mode
+aws eks update-cluster-config \
+  --name events-cluster-auto \
+  --region us-east-1 \
+  --compute-config enabled=true,nodePools=general-purpose,nodePools=system
 
 # Update kubeconfig
 aws eks update-kubeconfig --name events-cluster-auto --region us-east-1
