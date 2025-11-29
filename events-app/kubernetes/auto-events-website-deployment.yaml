@@ -15,7 +15,12 @@ spec:
         app: auto-events-website
     spec:
       nodeSelector:
-        node.kubernetes.io/instance-type: "t3.medium"
+        karpenter.sh/nodepool: "spot-compute"
+      tolerations:
+        - key: spot
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
       containers:
       - name: events-website
         image: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/events-website:latest
