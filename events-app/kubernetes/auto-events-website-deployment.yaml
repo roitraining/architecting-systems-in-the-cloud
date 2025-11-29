@@ -16,17 +16,13 @@ spec:
     spec:
       affinity:
         nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              preference:
-                matchExpressions:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
                   - key: karpenter.sh/capacity-type
                     operator: In
                     values:
                       - spot
-            - weight: 50
-              preference:
-                matchExpressions:
                   - key: karpenter.k8s.aws/instance-family
                     operator: In
                     values:
