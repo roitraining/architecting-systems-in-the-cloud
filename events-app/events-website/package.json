@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "Events app website",
   "scripts": {
-    "start": "node inject-env.js && http-server . -p 3000",
-    "dev": "node inject-env.js && http-server . -p 3000"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "dependencies": {
-    "http-server": "^14.1.1"
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6"
   },
   "engines": {
     "node": "18.x"
