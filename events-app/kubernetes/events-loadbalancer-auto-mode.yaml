@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: events-website-loadbalancer
+  labels:
+    app: events-website
+  annotations:
+    # Make the LoadBalancer internet-facing (public) instead of internal (private)
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    # Use Network Load Balancer (NLB) for better performance with Auto Mode
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+spec:
+  type: LoadBalancer
+  selector:
+    app: events-website
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: events-backend-loadbalancer
+  labels:
+    app: events-backend
+  annotations:
+    # Make the LoadBalancer internet-facing (public) instead of internal (private)
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    # Use Network Load Balancer (NLB) for better performance with Auto Mode
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+spec:
+  type: LoadBalancer
+  selector:
+    app: events-backend
+  ports:
+  - name: http
+    port: 3001
+    targetPort: 3001
+    protocol: TCP
