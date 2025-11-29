@@ -1,11 +1,37 @@
-# Note: EKS Auto Mode manages NodePools automatically
-# This file documents the desired configuration
-# 
-# For EKS Auto Mode, you cannot create custom NodePools via kubectl
-# Instead, use pod-level nodeSelectors and tolerations to influence scheduling
-#
-# The deployments have been configured to prefer:
-# - Spot instances (via toleration)
-# - C4, C5, or M family instances (via nodeSelector)
-#
-# EKS Auto Mode will automatically provision appropriate nodes based on pod requirements
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: spot-compute
+spec:
+  template:
+    metadata:
+      labels:
+        workload-type: spot-compute
+    spec:
+      nodeClassRef:
+        group: eks.amazonaws.com
+        kind: NodeClass
+        name: default
+      requirements:
+        # Instance categories: C and M
+        - key: "eks.amazonaws.com/instance-category"
+          operator: In
+          values: ["c", "m"]
+        # Instance families: C4, C5, M4, M5, M6
+        - key: "eks.amazonaws.com/instance-family"
+          operator: In
+          values: ["c4", "c5", "c5a", "c5d", "c5n", "m4", "m5", "m5a", "m5d", "m5n", "m6a", "m6i"]
+        # Use spot instances
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["spot"]
+        # Architecture
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+  limits:
+    cpu: "100"
+    memory: 100Gi
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 720h

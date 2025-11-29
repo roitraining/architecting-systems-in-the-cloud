@@ -14,30 +14,8 @@ spec:
       labels:
         app: auto-events-backend
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: karpenter.sh/capacity-type
-                    operator: In
-                    values:
-                      - spot
-                  - key: karpenter.k8s.aws/instance-family
-                    operator: In
-                    values:
-                      - c4
-                      - c5
-                      - c5a
-                      - c5d
-                      - c5n
-                      - m4
-                      - m5
-                      - m5a
-                      - m5d
-                      - m5n
-                      - m6a
-                      - m6i
+      nodeSelector:
+        workload-type: spot-compute
       containers:
       - name: events-backend
         image: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/events-backend:latest
