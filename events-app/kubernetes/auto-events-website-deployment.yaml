@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auto-events-website
+  labels:
+    app: auto-events-website
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: auto-events-website
+  template:
+    metadata:
+      labels:
+        app: auto-events-website
+    spec:
+      nodeSelector:
+        node.kubernetes.io/instance-type: "t3.medium"
+      containers:
+      - name: events-website
+        image: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/events-website:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: API_URL
+          value: "http://auto-events-backend-service"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auto-events-website-service
+spec:
+  selector:
+    app: auto-events-website
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
