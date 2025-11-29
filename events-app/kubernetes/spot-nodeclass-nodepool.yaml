@@ -33,5 +33,5 @@ spec:
     cpu: "100"
     memory: 100Gi
   disruption:
-    consolidationPolicy: WhenUnderutilized
-    expireAfter: 720h
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 30s

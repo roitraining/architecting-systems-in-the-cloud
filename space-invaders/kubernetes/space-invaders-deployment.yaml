@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: space-invaders
+  labels:
+    app: space-invaders
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: space-invaders
+  template:
+    metadata:
+      labels:
+        app: space-invaders
+    spec:
+      containers:
+      - name: space-invaders
+        image: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/space-invaders:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: space-invaders-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: space-invaders
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
