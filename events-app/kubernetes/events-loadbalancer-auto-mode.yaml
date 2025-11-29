@@ -23,17 +23,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: events-backend-loadbalancer
+  name: events-backend
   labels:
     app: events-backend
-  annotations:
-    # Make the LoadBalancer internet-facing (public) instead of internal (private)
-    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-    # Use Network Load Balancer (NLB) for better performance with Auto Mode
-    service.beta.kubernetes.io/aws-load-balancer-type: external
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: events-backend
   ports:
