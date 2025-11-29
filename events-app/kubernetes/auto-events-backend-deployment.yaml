@@ -14,13 +14,28 @@ spec:
       labels:
         app: auto-events-backend
     spec:
-      nodeSelector:
-        karpenter.sh/nodepool: "spot-compute"
-      tolerations:
-        - key: spot
-          operator: Equal
-          value: "true"
-          effect: NoSchedule
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: karpenter.sh/capacity-type
+                    operator: In
+                    values:
+                      - spot
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: karpenter.k8s.aws/instance-family
+                    operator: In
+                    values:
+                      - c4
+                      - c5
+                      - c5a                    
+                      - c5n
+                      - m4
+                      - m5                  
       containers:
       - name: events-backend
         image: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/events-backend:latest
