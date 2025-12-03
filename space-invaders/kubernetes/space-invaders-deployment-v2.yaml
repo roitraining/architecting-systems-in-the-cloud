@@ -1,22 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: space-invaders
+  name: space-invaders-v2
   labels:
     app: space-invaders
+    version: v2
 spec:
   replicas: 3
   selector:
     matchLabels:
       app: space-invaders
+      version: v2
   template:
     metadata:
       labels:
         app: space-invaders
+        version: v2
     spec:
       containers:
       - name: space-invaders
-        image: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/space-invaders:latest
+        image: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/space-invaders:v2
         ports:
         - containerPort: 8080
         resources:
