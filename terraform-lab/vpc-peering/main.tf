@@ -21,7 +21,7 @@ data "terraform_remote_state" "lab1" {
   backend = "local"
 
   config = {
-    path = "../lab1-vpc-ec2/terraform.tfstate"
+    path = "../vpc-ec2/terraform.tfstate"
   }
 }
 
