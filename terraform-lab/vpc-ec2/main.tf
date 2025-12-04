@@ -127,6 +127,48 @@ resource "aws_route_table_association" "vpc_2_rta" {
   route_table_id = aws_route_table.vpc_2_rt.id
 }
 
+# IAM Role for SSM
+resource "aws_iam_role" "ssm_role" {
+  name = "${var.project_name}-ssm-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name    = "${var.project_name}-ssm-role"
+    Project = var.project_name
+    Lab     = "lab1-vpc-ec2"
+  }
+}
+
+# Attach SSM managed policy to role
+resource "aws_iam_role_policy_attachment" "ssm_policy" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+# Instance profile for EC2
+resource "aws_iam_instance_profile" "ssm_profile" {
+  name = "${var.project_name}-ssm-profile"
+  role = aws_iam_role.ssm_role.name
+
+  tags = {
+    Name    = "${var.project_name}-ssm-profile"
+    Project = var.project_name
+    Lab     = "lab1-vpc-ec2"
+  }
+}
+
 # Security Group for VPC 1
 resource "aws_security_group" "vpc_1_sg" {
   name        = "${var.project_name}-vpc-1-sg"
@@ -213,6 +255,7 @@ resource "aws_instance" "vpc_1_instance" {
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.vpc_1_subnet.id
   vpc_security_group_ids = [aws_security_group.vpc_1_sg.id]
+  iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
 
   # User data to install ping utility
   user_data = <<-EOF
@@ -234,6 +277,7 @@ resource "aws_instance" "vpc_2_instance" {
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.vpc_2_subnet.id
   vpc_security_group_ids = [aws_security_group.vpc_2_sg.id]
+  iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
 
   # User data to install ping utility
   user_data = <<-EOF
