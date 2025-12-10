@@ -23,7 +23,7 @@ spec:
         - name: PORT
           value: "3000"
         - name: API_URL
-          value: "http://events-backend-service"
+          value: "http://events-backend-service:3001"
         resources:
           requests:
             memory: "64Mi"
